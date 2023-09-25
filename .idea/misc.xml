@@ -1,0 +1,26 @@
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/drawable/shape_bgtop.xml" value="0.108" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/drawable/shape_btn.xml" value="0.108" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/font/font.xml" value="0.2" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/layout/activity_main.xml" value="0.15625" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/layout/dialog_add_new_item.xml" value="0.25" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/layout/dialog_delete.xml" value="0.25" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/layout/dialog_edit_item.xml" value="0.33" />
+        <entry key="..\:/Users/jalaxi/Desktop/FoodShop/app/src/main/res/layout/item_food.xml" value="0.5" />
+        <entry key="..\:/Users/jalaxi/Desktop/Project Android/FoodShop/app/src/main/res/layout/activity_main.xml" value="0.278125" />
+        <entry key="..\:/Users/jalaxi/Desktop/Project Android/FoodShop/app/src/main/res/layout/dialog_add_new_item.xml" value="0.278125" />
+        <entry key="..\:/Users/jalaxi/Desktop/Project Android/FoodShop/app/src/main/res/layout/dialog_delete.xml" value="0.278125" />
+        <entry key="..\:/Users/jalaxi/Desktop/Project Android/FoodShop/app/src/main/res/layout/dialog_edit_item.xml" value="0.278125" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
