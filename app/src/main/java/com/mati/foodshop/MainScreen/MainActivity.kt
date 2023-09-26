@@ -1,4 +1,4 @@
-package com.mati.foodshop
+package com.mati.foodshop.MainScreen
 
 import android.app.AlertDialog
 import android.content.Context
@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mati.foodshop.Adapter.FoodAdapter
+import com.mati.foodshop.MainScreen.Adapter.FoodAdapter
 import com.mati.foodshop.DataBase.Food
 import com.mati.foodshop.DataBase.FoodDao
 import com.mati.foodshop.DataBase.myDataBase
