@@ -8,34 +8,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mati.foodshop.MainScreen.Adapter.FoodAdapter
 import com.mati.foodshop.DataBase.Food
-import com.mati.foodshop.DataBase.FoodDao
 import com.mati.foodshop.DataBase.myDataBase
+import com.mati.foodshop.MainScreen.Adapter.FoodAdapter
 import com.mati.foodshop.databinding.ActivityMainBinding
 import com.mati.foodshop.databinding.DialogAddNewItemBinding
 import com.mati.foodshop.databinding.DialogDeleteBinding
 import com.mati.foodshop.databinding.DialogEditItemBinding
 
-class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
-    lateinit var binding: ActivityMainBinding
-    lateinit var myAdapter: FoodAdapter
-    lateinit var foodDao: FoodDao
+class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents, MainContract.View {
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var myAdapter: FoodAdapter
+    private lateinit var presenter: MainContract.Presenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        foodDao = myDataBase.getDataBase(this).foodDao
+        presenter = MainPresenter(myDataBase.getDataBase(this).foodDao)
 
         val sharedPreferences = getSharedPreferences("Mati", Context.MODE_PRIVATE)
         if (sharedPreferences.getBoolean("frist_run", true)) {
-            fristRun()
-
+            presenter.fristRun()
             sharedPreferences.edit().putBoolean("frist_run", false).apply()
         }
 
-        showFoodAll()
+        presenter.onAttach(this)
 
         binding.btnAddNewfood.setOnClickListener {
             addFood()
@@ -43,101 +40,15 @@ class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
 
         binding.searchBox.addTextChangedListener { editTextInput ->
 
-            searchFood(editTextInput.toString())
-
+            presenter.onSearchFood(editTextInput.toString())
 
         }
-
-
-
     }
-
-    private fun searchFood(editTextInput: String) {
-
-        if(editTextInput!!.isNotEmpty()){
-
-            val searchData = foodDao.searchFood(editTextInput)
-            myAdapter.setData(ArrayList(searchData))
-
-        }else {
-            val data = foodDao.getAllFoods()
-            myAdapter.setData(ArrayList(data))
-        }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.onDetach()
     }
-
-    private fun fristRun() {
-
-        val foodList = listOf(
-            Food(
-                txtSubject = "pizza",
-                txtPrice = "15",
-                txtDistance = "3",
-                txtCity = "Tehran",
-                urlImage = "https://kadolin.ir/mag/wp-content/uploads/2022/04/Pizza-recipe.jpg",
-                numberOfRating = 41,
-                rating = 4f
-            ),
-            Food(
-                txtSubject = "Kebab",
-                txtPrice = "10",
-                txtDistance = "3",
-                txtCity = "Tehran",
-                urlImage = "https://rahavardnews.com/wp-content/uploads/2022/02/vaziri3.jpg",
-                numberOfRating = 23,
-                rating = 5f
-            ),
-            Food(
-                txtSubject = "Ash Kashk",
-                txtPrice = "5",
-                txtDistance = "3",
-                txtCity = "Tehran",
-                urlImage = "https://setare.com/files/1396/09/27/%D8%B7%D8%B1%D8%B2-%D8%AA%D9%87%DB%8C%D9%87-%D8%A2%D8%B4-%D8%B1%D8%B4%D8%AA%D9%87-%D8%AF%D9%88%D9%86%D9%81%D8%B1%D9%87.jpg",
-                numberOfRating = 132,
-                rating = 5f
-            ),
-            Food(
-                txtSubject = "Ghormeh Sabzi",
-                txtPrice = "8",
-                txtDistance = "3",
-                txtCity = "Tehran",
-                urlImage = "https://media.tehrantimes.com/d/t/2022/05/22/4/4158248.jpg",
-                numberOfRating = 150,
-                rating = 5f
-            ),
-            Food(
-                txtSubject = "Kofte Tabrizi",
-                txtPrice = "19",
-                txtDistance = "123",
-                txtCity = "Tabriz",
-                urlImage = "https://cookingcounty.com/wp-content/uploads/2021/12/koofteh-tabrizi.jpg",
-                numberOfRating = 102,
-                rating = 5f
-            ),
-            Food(
-                txtSubject = "Gheymeh",
-                txtPrice = "8",
-                txtDistance = "3",
-                txtCity = "Tehran",
-                urlImage = "https://www.destinationiran.com/wp-content/uploads/2016/06/Khoresh-Gheimeh-Recipe-1024x665.jpg",
-                numberOfRating = 72,
-                rating = 3f
-            )
-        )
-        foodDao.insertAllFood(foodList)
-
-    }
-
-    private fun showFoodAll() {
-
-        val foodData = foodDao.getAllFoods()
-        myAdapter = FoodAdapter(ArrayList(foodData), this)
-        binding.recyclerMain.adapter = myAdapter
-        binding.recyclerMain.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-
-    }
-
-    private fun addFood(){
+    private fun addFood() {
 
         val dialog = AlertDialog.Builder(this).create()
 
@@ -164,7 +75,7 @@ class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
                 val ratingBarStar: Float = (1..5).random().toFloat()
 
                 val newFood = Food(
-                    txtSubject =  txtName,
+                    txtSubject = txtName,
                     txtPrice = txtPrice,
                     txtDistance = txtDistance,
                     txtCity = txtCity,
@@ -172,10 +83,10 @@ class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
                     numberOfRating = txtRatingNumber,
                     rating = ratingBarStar
                 )
-                myAdapter.addFood(newFood)
-                foodDao.insertFood(newFood)
+
+                presenter.onAddNewFood(newFood)
+
                 dialog.dismiss()
-                binding.recyclerMain.scrollToPosition(0)
 
 
             } else {
@@ -229,9 +140,7 @@ class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
                     numberOfRating = food.numberOfRating,
                     rating = food.rating
                 )
-
-                myAdapter.updateFood(newFood, position)
-                foodDao.updateFood(newFood)
+                presenter.onUpdateFood(newFood, position)
                 dialog.dismiss()
 
             } else {
@@ -239,7 +148,6 @@ class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
             }
         }
     }
-
     override fun onFoodLongClicked(food: Food, position: Int) {
 
 
@@ -253,10 +161,37 @@ class MainActivity : AppCompatActivity(), FoodAdapter.FoodEvents {
             dialog.dismiss()
         }
         dialogDeleteBinding.dialogBtnDelete.setOnClickListener {
+            presenter.onDeleteFood(food, position)
             dialog.dismiss()
-            myAdapter.removeFood(food, position)
-            foodDao.deleteFood( food )
         }
+
+    }
+
+    override fun showFoods(data: List<Food>) {
+
+        myAdapter = FoodAdapter(ArrayList(data), this)
+        binding.recyclerMain.adapter = myAdapter
+        binding.recyclerMain.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+
+    }
+    override fun refreshFood(data: List<Food>) {
+
+        myAdapter.setData(ArrayList(data))
+
+    }
+    override fun addFood(newFood: Food) {
+
+        myAdapter.addFood(newFood)
+
+    }
+    override fun deleteFood(oldFood: Food, pos: Int) {
+
+        myAdapter.removeFood(oldFood, pos)
+
+    }
+    override fun updateFood(editingFood: Food, pos: Int) {
+
+        myAdapter.updateFood(editingFood, pos)
 
     }
 }
