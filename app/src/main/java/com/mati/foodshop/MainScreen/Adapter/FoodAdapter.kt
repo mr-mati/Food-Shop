@@ -1,4 +1,4 @@
-package com.mati.foodshop.Adapter
+package com.mati.foodshop.MainScreen.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
